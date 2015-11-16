@@ -20,7 +20,6 @@ You need a RabbitMQ and MongoDB. Connects to ```amqp://guest:guest@localhost:567
 npm start
 ```
 
-
 ### API
 #### Create Task
 ```
@@ -47,12 +46,6 @@ Content-Type: application/json
     "taskId": 1
   }
 }
-```
-
-## Test
-
-``` bash
-npm test
 ```
 
 ## Licence
