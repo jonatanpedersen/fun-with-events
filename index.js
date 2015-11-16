@@ -142,7 +142,7 @@ async function handleRequest(request, response) {
 }
 
 async function dispatch(name, data) {
-  let handler = await this.handlers[name];
+  let handler = await this.handlers[name]();
 
   await handler(data);
 }
@@ -189,7 +189,7 @@ async function main() {
       let boundHandleRequest = handleRequest.bind({
         dispatch: dispatch.bind({
           handlers: {
-            createTask: validateAuthorizeHandle.bind({
+            createTask: () => validateAuthorizeHandle.bind({
               validate: validateUsingJsonSchema.bind({
                 validator: new Validator(),
                 schema: schemas.createTask
@@ -201,7 +201,7 @@ async function main() {
                 publishEvent: boundPublishEvent
               })
             }),
-            deleteTask: validateAuthorizeHandle.bind({
+            deleteTask: () => validateAuthorizeHandle.bind({
               validate: validateUsingJsonSchema.bind({
                 validator: new Validator(),
                 schema: schemas.deleteTask
