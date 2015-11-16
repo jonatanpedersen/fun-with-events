@@ -1,0 +1,23 @@
+{
+  "name": "functional-composition",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "babel-node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "amqp": "^0.2.4",
+    "babel-core": "^6.1.21",
+    "babel-plugin-syntax-async-functions": "^6.1.18",
+    "babel-plugin-transform-async-to-generator": "^6.1.18",
+    "jsonschema": "^1.0.2",
+    "mongodb": "^2.0.48"
+  },
+  "devDependencies": {
+    "babel-preset-es2015-node": "^5.0.1"
+  }
+}
