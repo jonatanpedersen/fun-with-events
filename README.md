@@ -14,6 +14,8 @@ npm install
 
 ## Usage
 
+You need a RabbitMQ and MongoDB. Connects to ```amqp://guest:guest@localhost:5672``` and ```mongodb://localhost:27017/test```. Change if needed.
+
 ``` bash
 npm start
 ```
