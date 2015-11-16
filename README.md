@@ -17,14 +17,10 @@ npm install
 ``` bash
 npm start
 ```
-## Test
 
-``` bash
-npm test
-```
 
-## API
-### Create Task
+### API
+#### Create Task
 ```
 POST / HTTP/1.1
 Content-Type: application/json
@@ -38,7 +34,7 @@ Content-Type: application/json
 }
 ```
 
-### Delete Task
+#### Delete Task
 ```
 POST / HTTP/1.1
 Content-Type: application/json
@@ -49,6 +45,12 @@ Content-Type: application/json
     "taskId": 1
   }
 }
+```
+
+## Test
+
+``` bash
+npm test
 ```
 
 ## Licence
