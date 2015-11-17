@@ -1,5 +1,5 @@
 # fun-with-events
-This is an ongoing exploration of [CQRS](http://martinfowler.com/bliki/CQRS.html), [Event Sourcing](http://martinfowler.com/eaaDev/EventSourcing.html), [Pub/Sub](https://en.wikipedia.org/wiki/Publish%E2%80%93subscribe_pattern) and [Dependency Injection](https://en.wikipedia.org/wiki/Dependency_injection) in the context of [ES6/7](http://www.ecma-international.org/publications/standards/Ecma-262.htm), [functional programming](https://en.wikipedia.org/wiki/Functional_programming) and [S.O.L.I.D.](http://butunclebob.com/ArticleS.UncleBob.PrinciplesOfOod) principles.
+This is an ongoing exploration of [CQRS](http://martinfowler.com/bliki/CQRS.html), [Event Sourcing](http://martinfowler.com/eaaDev/EventSourcing.html), [Pub/Sub](https://en.wikipedia.org/wiki/Publish%E2%80%93subscribe_pattern) and [Dependency Injection](https://en.wikipedia.org/wiki/Dependency_injection) in the context of [ES6/7](http://www.ecma-international.org/publications/standards/Ecma-262.htm) and the [S.O.L.I.D.](http://butunclebob.com/ArticleS.UncleBob.PrinciplesOfOod) principles.
 
 ## Setup
 Clone from GitHub:
