@@ -3,7 +3,8 @@
 import fs from 'fs';
 import http from 'http';
 import https from 'https';
-
+import mongodb from 'mongodb';
+import amqp from 'amqp';
 import { Validator } from 'jsonschema';
 import {
   createConnectToMongoDB,
@@ -27,8 +28,8 @@ let schemas = {
 
 async function main() {
   try {
-    let db = await createConnectToMongoDB()('mongodb://localhost:27017/test');
-    let mq = await createConnectToRabbitMQ()('amqp://guest:guest@localhost:5672');
+    let db = await createConnectToMongoDB(mongodb)('mongodb://localhost:27017/test');
+    let mq = await createConnectToRabbitMQ(amqp)('amqp://guest:guest@localhost:5672');
 
     async function compositionRoot(request, response) {
       try {

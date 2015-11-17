@@ -1,41 +1,59 @@
 # fun-with-events
+This is an ongoing exploration of [CQRS](http://martinfowler.com/bliki/CQRS.html), [Event Sourcing](http://martinfowler.com/eaaDev/EventSourcing.html), [Pub/Sub](https://en.wikipedia.org/wiki/Publish%E2%80%93subscribe_pattern) and [Dependency Injection](https://en.wikipedia.org/wiki/Dependency_injection) in the context of [ES6/7](http://www.ecma-international.org/publications/standards/Ecma-262.htm), [functional programming](https://en.wikipedia.org/wiki/Functional_programming) and [S.O.L.I.D.](http://butunclebob.com/ArticleS.UncleBob.PrinciplesOfOod) principles.
 
-Fun with NO-DDD, NO-CRUD, NO-REST, DI, ES, MongoDB and RabbitMQ :)
-
-## Install
-
+## Setup
+Clone from GitHub:
 ``` bash
 git clone git@github.com:jonatanpedersen/fun-with-events.git
 ```
+Install dependencies:
 
 ``` bash
 npm install
 ```
 
 ## Usage
-
-You need a RabbitMQ and MongoDB. Connects to ```amqp://guest:guest@localhost:5672``` and ```mongodb://localhost:27017/test```. Change if needed.
-
+Start the application:
 ``` bash
 npm start
 ```
 
+Note: You need RabbitMQ and MongoDB. The application connects to ```amqp://guest:guest@localhost:5672``` and ```mongodb://localhost:27017/test``` by default.
+
 ### Core Concepts
 
-The applications composition root is the main function, and it is composed primarily of ```Functions```.
-
 #### action
-Describes an ```action``` that mutates a domain object.
+Something that describes a desired mutation of a domain object. Consists of a name and some parameters.
 
-Events are always named in the future tense e.g. ```createTask```.
+``` js
+{
+  name: 'createTask',
+  params: {
+    taskId: 1,
+    description: 'Get ducks in a row'
+  }
+}
+```
+
+Actions are always named with a verb followed by the name of the domain object. e.g. ```createTask```.
 
 #### event
-Describes an ```event``` that a domain object has mutated.
+Something that tell us that a domain object has mutated. Consists of a name and some data.
+
+``` js
+{
+  name: 'taskCreated',
+  data: {
+    taskId: 1,
+    description: 'Get ducks in a row'
+  }
+}
+```
 
 Events are always named in the past tense e.g. ```taskCreated```.
 
 #### dispatch
-Dispatch an action to a ```handle```.
+Dispatches an ```action``` to a ```handle```.
 
 ``` js
 async function dispatch(action) {
@@ -43,27 +61,26 @@ async function dispatch(action) {
 ```
 
 #### handle
-Handle an ```action``` by throwing errors or writing events.
+Handles an ```action``` by mutating a domain object.
+
 ``` js
 async function handle(action) {
 }
 ```
 
 #### validate
-Validate an ```action``` by throwing errors doing nothing.
+Validates an ```action``` and throws errors if necessary.
+
 ``` js
 async function validate(action) {
 }
 ```
 
-#### authorize
-Authorize an ```action``` by throwing errors doing nothing.
-``` js
-async function authorize(action) {
-}
-```
+#### composition root
+The applications ```main()``` function is the composition root, and it is composed primarily of ```functions```.
 
-### dependency injection
+#### dependency injection
+All functions should have their dependencies injected during creation.
 
 ``` js
 function create(dependency1, dependency2) {
@@ -74,17 +91,20 @@ function create(dependency1, dependency2) {
 }
 ```
 
+### API
+The following actions have been created in this example application.
+
 #### Create Task
 ```
 POST / HTTP/1.1
 Content-Type: application/json
 
 {
-"name": "createTask",
-"data": {
-    "taskId": 1,
-    "description": "Get ducks in a row"
-  }
+  "name": "createTask",
+  "params": {
+      "taskId": 1,
+      "description": "Get ducks in a row"
+    }
 }
 ```
 
@@ -94,10 +114,10 @@ POST / HTTP/1.1
 Content-Type: application/json
 
 {
-"name": "deleteTask",
-"data": {
-    "taskId": 1
-  }
+  "name": "deleteTask",
+  "params": {
+      "taskId": 1
+    }
 }
 ```
 
