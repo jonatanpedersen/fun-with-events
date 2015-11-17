@@ -20,7 +20,60 @@ You need a RabbitMQ and MongoDB. Connects to ```amqp://guest:guest@localhost:567
 npm start
 ```
 
-### API
+### Core Concepts
+
+The applications composition root is the main function, and it is composed primarily of ```Functions```.
+
+#### action
+Describes an ```action``` that mutates a domain object.
+
+Events are always named in the future tense e.g. ```createTask```.
+
+#### event
+Describes an ```event``` that a domain object has mutated.
+
+Events are always named in the past tense e.g. ```taskCreated```.
+
+#### dispatch
+Dispatch an action to a ```handle```.
+
+``` js
+async function dispatch(action) {
+}
+```
+
+#### handle
+Handle an ```action``` by throwing errors or writing events.
+``` js
+async function handle(action) {
+}
+```
+
+#### validate
+Validate an ```action``` by throwing errors doing nothing.
+``` js
+async function validate(action) {
+}
+```
+
+#### authorize
+Authorize an ```action``` by throwing errors doing nothing.
+``` js
+async function authorize(action) {
+}
+```
+
+### dependency injection
+
+``` js
+function create(dependency1, dependency2) {
+  return async function (arg1, arg2) {
+      // call dependency1
+      // call dependency2
+  }
+}
+```
+
 #### Create Task
 ```
 POST / HTTP/1.1
