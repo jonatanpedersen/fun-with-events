@@ -13,7 +13,7 @@ export function createHandleWallBuilt(read, write) {
 
     let id = `wall-${event.data.wallId}`;
     let wall = await read(id) || {};
-
+    wall.private = false;
     wall.wallId = event.data.wallId;
     wall.lines = [];
     wall.texts = [];

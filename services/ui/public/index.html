@@ -137,9 +137,7 @@
         $scope.buildWallForm = {};
 
         $scope.buildWall = function() {
-          WallService.buildWall($scope.buildWallForm.wallId).then(function() {
-            $location.path('/wall/' + $scope.buildWallForm.wallId);
-          });
+          $location.path('/wall/' + $scope.buildWallForm.wallId);
         };
       }
 
