@@ -3,10 +3,10 @@
 	"type": "object",
 	"properties": {
 		"wallId": { "type": "string" },
-		"text": { "type": "string" },
 		"x": { "type": "number" },
 		"y": { "type": "number" },
+		"text": { "type": "string" },
 		"color": { "type": "string" },
 	},
-	"required": ["wallId", "text", "x", "y"]
+	"required": ["wallId", "x", "y", "text", "color"]
 }

@@ -2,7 +2,7 @@
 	"id": "/wallCleaned",
 	"type": "object",
 	"properties": {
-		"wallId": {"type": "string"}
+		"wallId": { "type": "string" }
 	},
 	"required": ["wallId"]
 }

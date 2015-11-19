@@ -25,8 +25,9 @@ import { createReadFromMongoDB } from '../../lib/read/read';
 import { createWriteToMongoDB } from '../../lib/read/write';
 
 // queries
-import { createHandleWall } from  './queries/wall';
 import { createHandleStats } from  './queries/stats';
+import { createHandleWall } from  './queries/wall';
+import { createHandleWallList } from  './queries/wallList';
 
 // events
 import { createHandleWallBuilt } from  './events/wallBuilt';
@@ -114,8 +115,9 @@ async function main() {
         let handleRequest = createHandleRequest(
           createGetRequestQuery(),
           createDispatch({
+            stats: () => createHandleStats(read),
             wall: () => createValidateWithJsonHandleWithReadFromMongoDB(schemas.wall, createHandleWall),
-            stats: () => createHandleStats(read)
+            wallList: () => createHandleWallList(read)
           })
         );
 

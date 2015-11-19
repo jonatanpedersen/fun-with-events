@@ -22,7 +22,7 @@ Note: You need RabbitMQ and MongoDB. The application connects to ```amqp://guest
 
 ### Core Concepts
 
-#### action
+#### command
 Something that describes a desired mutation of a domain object. Consists of a name and some parameters.
 
 ``` js
@@ -50,31 +50,49 @@ Something that tell us that a domain object has mutated. Consists of a name and 
 }
 ```
 
-Events are always named in the past tense e.g. ```taskCreated```.
-
-#### dispatch
-Dispatches an ```action``` to a ```handle```.
+#### query
+Something that describes a view on the read side. Contains a name and optional parameters.
 
 ``` js
-async function dispatch(action) {
+{
+  name: 'tasks',
+  params: {
+    order: 1
+  }
+}
+```
+
+#### dispatch
+Dispatches a ```command```, ```event``` or  ```query``` to the appropriate ```handle``` function.
+
+``` js
+async function dispatch(thing) {
 }
 ```
 
 #### handle
-Handles an ```action``` by mutating a domain object.
+Handles a ```command``` by mutating a domain object on the write side.
+Handles an ```event``` by updating a view on the read side.
+Handles a ```query``` by returning a view from the read side.
 
 ``` js
-async function handle(action) {
+async function handle(thing) {
 }
 ```
 
 #### validate
-Validates an ```action``` and throws errors if necessary.
+Validates a ```command```, ```event``` or  ```query``` and throws an error if necessary.
 
 ``` js
-async function validate(action) {
+async function validate(thing) {
 }
 ```
+
+#### Services
+The system is comprised of three services.
+ * The Read service
+ * The Write service
+ * The UI service
 
 #### composition root
 The applications ```main()``` function is the composition root, and it is composed primarily of ```functions```.
@@ -88,36 +106,6 @@ function create(dependency1, dependency2) {
       // call dependency1
       // call dependency2
   }
-}
-```
-
-### API
-The following actions have been created in this example application.
-
-#### Create Task
-```
-POST / HTTP/1.1
-Content-Type: application/json
-
-{
-  "name": "createTask",
-  "params": {
-      "taskId": 1,
-      "description": "Get ducks in a row"
-    }
-}
-```
-
-#### Delete Task
-```
-POST / HTTP/1.1
-Content-Type: application/json
-
-{
-  "name": "deleteTask",
-  "params": {
-      "taskId": 1
-    }
 }
 ```
 

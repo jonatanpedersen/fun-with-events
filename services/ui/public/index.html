@@ -2,38 +2,63 @@
   <head>
     <title>Wall</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="StyleSheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" >
+    <link rel="StyleSheet" href="https://bootswatch.com/flatly/bootstrap.min.css" >
     <style>
-      .section-default { background-color: #fff; }
-      .section-primary { background-color: #eee; }
+      .section-default { margin: 60px auto;}
+      .section-primary { }
     </style>
   </head>
   <body ng-controller="IndexController">
 
     <main ng-view></main>
 
-    <footer style="position: absolute; bottom: 0; width: 100%">
-      <div class="container-fluid">
-        <p>&copy; 2015 - <a href="https://www.jonatanpedersen.com">Jonatan Pedersen</a></p>
-      </div>
-    </footer>
+
 
     <script type="text/ng-template" id="index.html">
       <header class="jumbotron">
         <div class="container">
           <h1>WALL.io</h1>
-          <p>Build a wall and write and draw on it with your friends.</p>
-          <p><a href="#/wall/test" class="btn btn-primary btn-lg">OK! let&#39;s go</a></p>
+          <p>Write and draw on our test wall...</p>
+          <p><a href="#/wall/test" class="btn btn-primary btn-lg">Yes</a></p>
         </div>
       </header>
       <section class="section-default">
         <div class="container">
+          <h2><i class="glyphicon glyphicon-plus"></i> BUILD YOUR OWN PUBLIC WALL</h2>
+          <form ng-submit="buildWall()">
+            <p class="form-group">
+              <label for="wallId">WALL NAME</label>
+              <input type="text" id="wallId" class="form-control" ng-model="buildWallForm.wallId" />
+            </p>
+            <p class="form-group">
+              <button type="submit" class="btn btn-danger">BUILD WALL</button>
+            </p>
+          </form>
+        </div>
+      </section>
+      <section class="section-default">
+        <div class="container">
+          <h2><i class="glyphicon glyphicon-menu-hamburger"></i> PUBLIC WALLS</h2>
+          <div class="listt-group">
+            <a href="#/wall/{{wallListItem}}" class="list-group-item" ng-repeat="wallListItem in wallList" required>{{wallListItem}}</a>
+          </div>
+        </div>
+      </section>
+      <section class="section-default">
+        <div class="container">
+          <h2><i class="glyphicon glyphicon-stats"></i> STATS</h2>
           <div class="row">
             <div class="col-sm-6"><h1>{{stats.wallsBuilt || 0}} <small>walls built</small></h1></div>
             <div class="col-sm-6"><h1>{{stats.wallsCleaned || 0}} <small>walls cleaned</small></h1></div>
           </div>
         </div>
       </section>
+      <footer class="section-default">
+        <div class="container">
+          <hr/>
+          <p>&copy; 2015 - <a href="https://www.jonatanpedersen.com">Jonatan Pedersen</a></p>
+        </div>
+      </footer>
     </script>
 
     <script type="text/ng-template" id="wall.html">
@@ -55,6 +80,11 @@
           <line ng-repeat="line in wall.lines" ng-attr-x1="{{line.x1}}" ng-attr-y1="{{line.y1}}" ng-attr-x2="{{line.x2}}" ng-attr-y2="{{line.y2}}" style="stroke:rgb(255,0,0);stroke-width:2" />
           <text ng-repeat="text in wall.texts" ng-attr-x="{{text.x}}" ng-attr-y="{{text.y}}" fill="{{text.color}}">{{text.text}}</text>
       </svg>
+      <footer style="position: absolute; bottom: 0; width: 100%">
+        <div class="container-fluid">
+          <p>&copy; 2015 - <a href="https://www.jonatanpedersen.com">Jonatan Pedersen</a></p>
+        </div>
+      </footer>
     </script>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.7/angular.js"></script>
@@ -89,14 +119,26 @@
             });
         }]);
 
-      angular.module('app').controller('IndexController', ['$scope', 'WallService', IndexController]);
+      angular.module('app').controller('IndexController', ['$scope', '$location', 'WallService', IndexController]);
       angular.module('app').controller('WallController', ['$scope', '$timeout', '$routeParams', 'WallService', WallController]);
       angular.module('app').service('WallService', ['$http', WallService]);
 
-      function IndexController($scope, WallService) {
+      function IndexController($scope, $location, WallService) {
+        WallService.wallList().then(function(wallList) {
+          $scope.wallList = wallList;
+        });
+
         WallService.stats().then(function(stats) {
           $scope.stats = stats;
         });
+
+        $scope.buildWallForm = {};
+
+        $scope.buildWall = function() {
+          WallService.buildWall($scope.buildWallForm.wallId).then(function() {
+            $location.path('/wall/' + $scope.buildWallForm.wallId);
+          });
+        };
       }
 
       function WallController($scope, $timeout, $routeParams, WallService) {
@@ -300,6 +342,31 @@
           });
         }
 
+        function wall(wallId) {
+          return $http({
+            method: 'GET',
+            url: '/api/read/',
+            params: {
+              name: "wall",
+              wallId: wallId
+            }
+          }).then(function(response) {
+            return response.data;
+          });
+        }
+
+        function wallList() {
+          return $http({
+            method: 'GET',
+            url: '/api/read/',
+            params: {
+              name: "wallList"
+            }
+          }).then(function(response) {
+            return response.data;
+          });
+        }
+
         function writeOnWall(wallId, x, y, text, color) {
           return $http({
             method: 'POST',
@@ -320,26 +387,14 @@
           });
         }
 
-        function wall(wallId) {
-          return $http({
-            method: 'GET',
-            url: '/api/read/',
-            params: {
-              name: "wall",
-              wallId: wallId
-            }
-          }).then(function(response) {
-            return response.data;
-          });
-        }
-
         return {
           buildWall: buildWall,
           cleanWall: cleanWall,
           drawOnWall: drawOnWall,
           stats: stats,
-          writeOnWall: writeOnWall,
-          wall: wall
+          wall: wall,
+          wallList: wallList,
+          writeOnWall: writeOnWall
         }
       }
 
