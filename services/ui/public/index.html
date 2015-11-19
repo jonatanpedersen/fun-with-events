@@ -17,7 +17,7 @@
         <div class="container">
           <h1>WALL.io</h1>
           <p>Write and draw on our test wall...</p>
-          <p><a href="#/wall/test" class="btn btn-primary btn-lg">Yes</a></p>
+          <p><a href="#/test" class="btn btn-primary btn-lg">Yes</a></p>
         </div>
       </header>
       <section class="section-default">
@@ -38,7 +38,7 @@
         <div class="container">
           <h2><i class="glyphicon glyphicon-menu-hamburger"></i> PUBLIC WALLS</h2>
           <div class="listt-group">
-            <a href="#/wall/{{wallListItem}}" class="list-group-item" ng-repeat="wallListItem in wallList" required>{{wallListItem}}</a>
+            <a href="#/{{wallListItem}}" class="list-group-item" ng-repeat="wallListItem in wallList" required>{{wallListItem}}</a>
           </div>
         </div>
       </section>
@@ -112,7 +112,7 @@
               templateUrl: 'index.html',
               controller: 'IndexController'
             })
-            .when('/wall/:wallId', {
+            .when('/:wallId', {
               templateUrl: 'wall.html',
               controller: 'WallController'
             })
@@ -137,13 +137,15 @@
         $scope.buildWallForm = {};
 
         $scope.buildWall = function() {
-          $location.path('/wall/' + $scope.buildWallForm.wallId);
+          $location.path('/' + $scope.buildWallForm.wallId);
         };
       }
 
       function WallController($scope, $timeout, $routeParams, WallService) {
         $scope.wallId = $routeParams.wallId;
         $scope.color = "#000";
+
+        var t;
 
         function update() {
           WallService.wall($routeParams.wallId).then(function(wall) {
@@ -153,11 +155,16 @@
             }
             $scope.wall = wall;
           });
+
+          t = $timeout(update, 1000);
         }
 
         update();
 
-        window.setInterval(update, 1000);
+        $scope.$on('$destroy', function(){
+          $timeout.cancel(t);
+        });
+
 
         $scope.selectTool = function(tool) {
           $scope.selectedTool = tool;
