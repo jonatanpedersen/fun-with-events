@@ -18,11 +18,11 @@ import {
   createValidateUsingJsonSchema,
   createReadEventsFromMongoDB,
   createAppendEventToMongoDB
-} from  '../lib';
+} from  '../../lib';
 
 // read/write
-import { createReadFromMongoDB } from '../lib/read/read';
-import { createWriteToMongoDB } from '../lib/read/write';
+import { createReadFromMongoDB } from '../../lib/read/read';
+import { createWriteToMongoDB } from '../../lib/read/write';
 
 // queries
 import { createHandleWall } from  './queries/wall';
@@ -35,7 +35,7 @@ import { createHandleWallDrawnOn } from  './events/wallDrawnOn';
 import { createHandleWallWrittenOn } from  './events/wallWrittenOn';
 
 let schemas = {
-  wall: require('./queries/wall.json')
+  wall: require('../..//queries/wall.json')
 }
 
 async function main() {
@@ -88,10 +88,6 @@ async function main() {
           return channel.consume(queue, handleEvent, { noAck: false });
         });
 
-        return ok.then(function() {
-          console.log(' [*] Waiting for logs. To exit press CTRL+C');
-        });
-
         function handleEvent(rawEvent) {
           var event = {
             name: rawEvent.fields.routingKey,
@@ -133,8 +129,8 @@ async function main() {
     let httpServer = http.createServer(compositionRoot);
     let httpsServer = https.createServer({ key: fs.readFileSync('./server.key', 'utf8'), cert: fs.readFileSync('./server.crt', 'utf8') }, compositionRoot);
 
-    httpServer.listen(20080, () => { console.log('write listening on port 20080'); });
-    httpsServer.listen(20443, () => { console.log('write listening on port 20443'); });
+    httpServer.listen(20080, () => { console.log('read listening on port 20080'); });
+    httpsServer.listen(20443, () => { console.log('read listening on port 20443'); });
   }
   catch (ex) {
     console.log(ex);

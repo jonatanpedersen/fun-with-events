@@ -47,7 +47,7 @@
           <button ng-click="cleanWall()" class="btn btn-default"><i class="glyphicon glyphicon-erase"></i></button>
         </div>
       </div>
-      <svg  width="100%" height="100%" style="position: absolute; top: 0; left: 0; z-index: 50" ng-click="mouseClick($event)" ng-mousemove="mouseMove($event)" ng-right-click="mouseClick($event)">
+      <svg  width="100%" height="100%" style="position: absolute; top: 0; left: 0; z-index: 50" ng-click="mouseClick($event)" ng-mousemove="mouseMove($event)" ng-right-click="mouseClick($event)" ng-keydown="keydown($event)" tabindex="1">
           <circle ng-attr-cx="{{workspace.x}}" ng-attr-cy="{{workspace.y}}" r="5" ng-attr-fill="{{color}}"></circle>
           <line ng-if="selectedTool === drawOnWallTool && selectedTool.stage > 0" ng-attr-x1="{{workspace.x1}}" ng-attr-y1="{{workspace.y1}}" ng-attr-x2="{{workspace.x2}}" ng-attr-y2="{{workspace.y2}}" style="stroke:rgb(255,0,0);stroke-width:2" />
       </svg>
@@ -122,6 +122,13 @@
           $scope.resetWorkspace();
         }
 
+        $scope.keydown = function($event) {
+          $event.preventDefault();
+
+          if ($scope.selectedTool)
+            $scope.selectedTool.mouseClick(2);
+        }
+
         $scope.mouseClick = function($event) {
           $event.preventDefault();
 
@@ -147,6 +154,9 @@
           mouseMove: function(x, y) {
           },
           mouseClick: function(button) {
+            if (button > 1)
+              return;
+
             $timeout(function(){
               var wallId = $scope.wallId;
               var x = $scope.workspace.x;
@@ -154,14 +164,16 @@
               var color = $scope.color;
               var text = prompt();
 
-              $scope.wall.texts.push({
-                x: x,
-                y: y,
-                text: text,
-                color: color
-              });
+              if (text) {
+                $scope.wall.texts.push({
+                  x: x,
+                  y: y,
+                  text: text,
+                  color: color
+                });
 
-              WallService.writeOnWall(wallId, x, y, text, color);
+                WallService.writeOnWall(wallId, x, y, text, color);
+              }
             }, 100);
           }
         }

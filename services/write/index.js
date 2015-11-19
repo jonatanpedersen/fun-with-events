@@ -8,7 +8,6 @@ import amqp from 'amqp';
 import { Validator } from 'jsonschema';
 import {
   createConnectToMongoDB,
-  createConnectToRabbitMQ,
   createHandleRequest,
   createGetRequestBody,
   createDispatch,
@@ -17,7 +16,7 @@ import {
   createReadEventsFromMongoDB,
   createAppendEventToMongoDB,
   createPublishEventToRabbitMQ
-} from  '../lib';
+} from  '../../lib';
 
 import { createHandleBuildWall } from  './commands/buildWall';
 import { createHandleCleanWall } from  './commands/cleanWall';
@@ -25,16 +24,15 @@ import { createHandleDrawOnWall } from  './commands/drawOnWall';
 import { createHandleWriteOnWall } from  './commands/writeOnWall';
 
 let schemas = {
-  buildWall: require('./commands/buildWall.json'),
-  cleanWall: require('./commands/cleanWall.json'),
-  drawOnWall: require('./commands/drawOnWall.json'),
-  writeOnWall: require('./commands/writeOnWall.json')
+  buildWall: require('../../commands/buildWall.json'),
+  cleanWall: require('../../commands/cleanWall.json'),
+  drawOnWall: require('../../commands/drawOnWall.json'),
+  writeOnWall: require('../../commands/writeOnWall.json')
 }
 
 async function main() {
   try {
     let db = await createConnectToMongoDB(mongodb)('mongodb://localhost:27017/test');
-    //let mq = await createConnectToRabbitMQ(amqp)('amqp://guest:guest@localhost:5672');
 
     function createValidateWithJsonHandleWithDb(schema, createHandle) {
       return createCompositeHandle(
@@ -63,7 +61,7 @@ async function main() {
 
         await handleRequest(request, response);
       }
-      catch(ex) {
+      catch (ex) {
         console.log(ex);
       }
     }

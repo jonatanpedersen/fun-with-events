@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "concurrent \"babel-node ./index.js\" \"babel-node ./write/index.js\" \"babel-node ./read/index.js\" \"babel-node ./ui/index.js\""
+    "start": "concurrent \"babel-node ./index.js\" \"babel-node ./services/write/index.js\" \"babel-node ./services/read/index.js\" \"babel-node ./services/ui/index.js\""
   },
   "author": "",
   "license": "ISC",

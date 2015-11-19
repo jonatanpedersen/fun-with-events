@@ -6,9 +6,9 @@ export function createHandleWriteOnWall(readEvents, appendEvent) {
       name: 'wallWrittenOn',
       data: {
         wallId: action.params.wallId,
-        text: action.params.text,
         x: action.params.x,
         y: action.params.y,
+        text: action.params.text,
         color: action.params.color
       }
     });
