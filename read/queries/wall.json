@@ -1,0 +1,8 @@
+{
+	"id": "/wall",
+	"type": "object",
+	"properties": {
+		"wallId": {"type": "string"}
+	},
+	"required": ["wallId"]
+}

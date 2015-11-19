@@ -1,0 +1,8 @@
+{
+	"id": "/buildWall",
+	"type": "object",
+	"properties": {
+		"wallId": {"type": "string"}
+	},
+	"required": ["wallId"]
+}

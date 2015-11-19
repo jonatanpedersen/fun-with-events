@@ -1,0 +1,8 @@
+{
+	"id": "/cleanWall",
+	"type": "object",
+	"properties": {
+		"wallId": {"type": "string"}
+	},
+	"required": ["wallId"]
+}

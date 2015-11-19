@@ -1,0 +1,336 @@
+<html ng-app="app">
+  <head>
+    <title>Wall</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="StyleSheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" >
+    <style>
+      .section-default { background-color: #fff; }
+      .section-primary { background-color: #eee; }
+    </style>
+  </head>
+  <body ng-controller="IndexController">
+
+    <main ng-view></main>
+
+    <footer style="position: absolute; bottom: 0; width: 100%">
+      <div class="container-fluid">
+        <p>&copy; 2015 - <a href="https://www.jonatanpedersen.com">Jonatan Pedersen</a></p>
+      </div>
+    </footer>
+
+    <script type="text/ng-template" id="index.html">
+      <header class="jumbotron">
+        <div class="container">
+          <h1>WALL.io</h1>
+          <p>Build a wall and write and draw on it with your friends.</p>
+          <p><a href="#/wall/test" class="btn btn-primary btn-lg">OK! let&#39;s go</a></p>
+        </div>
+      </header>
+      <section class="section-default">
+        <div class="container">
+          <div class="row">
+            <div class="col-sm-6"><h1>{{stats.wallsBuilt || 0}} <small>walls built</small></h1></div>
+            <div class="col-sm-6"><h1>{{stats.wallsCleaned || 0}} <small>walls cleaned</small></h1></div>
+          </div>
+        </div>
+      </section>
+    </script>
+
+    <script type="text/ng-template" id="wall.html">
+      <div class="btn-toolbar" style="position: absolute; top: 15px; left: 15px; z-index: 100">
+        <div class="btn-group">
+          <a href="#/" class="btn btn-default"><i class="glyphicon glyphicon-menu-left"></i></a>
+        </div>
+        <div class="btn-group">
+          <button ng-click="selectTool(drawOnWallTool)" class="btn btn-default"><i class="glyphicon glyphicon-pencil"></i></button>
+          <button ng-click="selectTool(writeOnWallTool)" class="btn btn-default"><i class="glyphicon glyphicon-font"></i></button>
+          <button ng-click="cleanWall()" class="btn btn-default"><i class="glyphicon glyphicon-erase"></i></button>
+        </div>
+      </div>
+      <svg  width="100%" height="100%" style="position: absolute; top: 0; left: 0; z-index: 50" ng-click="mouseClick($event)" ng-mousemove="mouseMove($event)" ng-right-click="mouseClick($event)">
+          <circle ng-attr-cx="{{workspace.x}}" ng-attr-cy="{{workspace.y}}" r="5" ng-attr-fill="{{color}}"></circle>
+          <line ng-if="selectedTool === drawOnWallTool && selectedTool.stage > 0" ng-attr-x1="{{workspace.x1}}" ng-attr-y1="{{workspace.y1}}" ng-attr-x2="{{workspace.x2}}" ng-attr-y2="{{workspace.y2}}" style="stroke:rgb(255,0,0);stroke-width:2" />
+      </svg>
+      <svg  width="100%" height="100%" style="position: absolute; top: 0; left: 0;">
+          <line ng-repeat="line in wall.lines" ng-attr-x1="{{line.x1}}" ng-attr-y1="{{line.y1}}" ng-attr-x2="{{line.x2}}" ng-attr-y2="{{line.y2}}" style="stroke:rgb(255,0,0);stroke-width:2" />
+          <text ng-repeat="text in wall.texts" ng-attr-x="{{text.x}}" ng-attr-y="{{text.y}}" fill="{{text.color}}">{{text.text}}</text>
+      </svg>
+    </script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.7/angular.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.0-beta.2/angular-route.js"></script>
+
+    <script>
+      angular.module('app', ['ngRoute']);
+
+      angular.module('app').directive('ngRightClick', function($parse) {
+          return function(scope, element, attrs) {
+              var fn = $parse(attrs.ngRightClick);
+              element.bind('contextmenu', function(event) {
+                  event.preventDefault();
+                  fn(scope, {$event:event});
+              });
+          };
+      });
+
+      angular.module('app').config(['$routeProvider',
+        function($routeProvider) {
+          $routeProvider
+            .when('/', {
+              templateUrl: 'index.html',
+              controller: 'IndexController'
+            })
+            .when('/wall/:wallId', {
+              templateUrl: 'wall.html',
+              controller: 'WallController'
+            })
+            .otherwise({
+              redirectTo: '/'
+            });
+        }]);
+
+      angular.module('app').controller('IndexController', ['$scope', 'WallService', IndexController]);
+      angular.module('app').controller('WallController', ['$scope', '$timeout', '$routeParams', 'WallService', WallController]);
+      angular.module('app').service('WallService', ['$http', WallService]);
+
+      function IndexController($scope, WallService) {
+        WallService.stats().then(function(stats) {
+          $scope.stats = stats;
+        });
+      }
+
+      function WallController($scope, $timeout, $routeParams, WallService) {
+        $scope.wallId = $routeParams.wallId;
+        $scope.color = "#000";
+
+        function update() {
+          WallService.wall($routeParams.wallId).then(function(wall) {
+            if (!wall.wallId) {
+              WallService.buildWall($routeParams.wallId).then(function(wall) {
+              });
+            }
+            $scope.wall = wall;
+          });
+        }
+
+        update();
+
+        window.setInterval(update, 1000);
+
+        $scope.selectTool = function(tool) {
+          $scope.selectedTool = tool;
+          $scope.resetWorkspace();
+        }
+
+        $scope.mouseClick = function($event) {
+          $event.preventDefault();
+
+          if ($scope.selectedTool)
+            $scope.selectedTool.mouseClick($event.button);
+        }
+
+        $scope.mouseMove = function($event) {
+          $event.preventDefault();
+
+          $scope.workspace.x = $event.offsetX;
+          $scope.workspace.y = $event.offsetY;
+
+          if ($scope.selectedTool)
+            $scope.selectedTool.mouseMove($event.offsetX, $event.offsetY);
+        }
+
+        $scope.resetWorkspace = function() {
+          $scope.workspace = {};
+        }
+
+        $scope.writeOnWallTool = {
+          mouseMove: function(x, y) {
+          },
+          mouseClick: function(button) {
+            $timeout(function(){
+              var wallId = $scope.wallId;
+              var x = $scope.workspace.x;
+              var y = $scope.workspace.y
+              var color = $scope.color;
+              var text = prompt();
+
+              $scope.wall.texts.push({
+                x: x,
+                y: y,
+                text: text,
+                color: color
+              });
+
+              WallService.writeOnWall(wallId, x, y, text, color);
+            }, 100);
+          }
+        }
+
+        $scope.drawOnWallTool = {
+          stage: 0,
+          mouseMove: function(x, y) {
+            switch(this.stage) {
+              case 0:
+                $scope.workspace.x1 = x;
+                $scope.workspace.y1 = y;
+                break;
+
+              case 1:
+                $scope.workspace.x2 = x;
+                $scope.workspace.y2 = y;
+                break;
+            };
+          },
+          mouseClick: function(button) {
+            if (button == 2) {
+              this.stage = 0;
+              return;
+            }
+
+            switch(this.stage) {
+              case 0:
+                this.stage = 1
+                break;
+
+              case 1:
+                this.stage = 2;
+                $scope.wall.lines.push({
+                  x1: $scope.workspace.x1,
+                  y1: $scope.workspace.y1,
+                  x2: $scope.workspace.x2,
+                  y2: $scope.workspace.y2,
+                  color: $scope.color
+                })
+
+                WallService.drawOnWall($scope.wallId, $scope.workspace.x1, $scope.workspace.y1, $scope.workspace.x2, $scope.workspace.y2, $scope.color).then(function() {
+                  $scope.workspace.x1 = $scope.workspace.x2;
+                  $scope.workspace.y1 = $scope.workspace.y2;
+                  this.stage = 1;
+                }.bind(this));
+
+                break;
+            }
+          }
+        }
+
+        $scope.cleanWall = function() {
+          WallService.cleanWall($routeParams.wallId).then(function() {
+          });
+        }
+
+        $scope.selectTool($scope.drawOnWallTool);
+      }
+
+      function WallService($http) {
+
+        function buildWall(wallId) {
+          return $http({
+            method: 'POST',
+            url: '/api/write/',
+            data: {
+              name: "buildWall",
+              params: {
+                wallId: wallId
+              }
+            }
+          })
+          .then(function(response) {
+            return response.data;
+          });
+        }
+
+        function cleanWall(wallId) {
+          return $http({
+            method: 'POST',
+            url: '/api/write/',
+            data: {
+              name: "cleanWall",
+              params: {
+                wallId: wallId
+              }
+            }
+          })
+          .then(function(response) {
+            return response.data;
+          });
+        }
+
+        function drawOnWall(wallId, x1, y1, x2, y2, color) {
+          return $http({
+            method: 'POST',
+            url: '/api/write/',
+            data: {
+              name: "drawOnWall",
+              params: {
+                wallId: wallId,
+                x1: x1,
+                y1: y1,
+                x2: x2,
+                y2: y2,
+                color: color
+              }
+            }
+          })
+          .then(function(response) {
+            return response.data;
+          });
+        }
+
+        function stats() {
+          return $http({
+            method: 'GET',
+            url: '/api/read/',
+            params: {
+              name: "stats"
+            }
+          }).then(function(response) {
+            return response.data;
+          });
+        }
+
+        function writeOnWall(wallId, x, y, text, color) {
+          return $http({
+            method: 'POST',
+            url: '/api/write/',
+            data: {
+              name: "writeOnWall",
+              params: {
+                wallId: wallId,
+                x: x,
+                y: y,
+                text: text,
+                color: color
+              }
+            }
+          })
+          .then(function(response) {
+            return response.data;
+          });
+        }
+
+        function wall(wallId) {
+          return $http({
+            method: 'GET',
+            url: '/api/read/',
+            params: {
+              name: "wall",
+              wallId: wallId
+            }
+          }).then(function(response) {
+            return response.data;
+          });
+        }
+
+        return {
+          buildWall: buildWall,
+          cleanWall: cleanWall,
+          drawOnWall: drawOnWall,
+          stats: stats,
+          writeOnWall: writeOnWall,
+          wall: wall
+        }
+      }
+
+    </script>
+  </body>
+</html>

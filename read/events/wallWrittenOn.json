@@ -1,0 +1,12 @@
+{
+	"id": "/wallWrittenOn",
+	"type": "object",
+	"properties": {
+		"wallId": { "type": "string" },
+		"text": { "type": "string" },
+		"x": { "type": "number" },
+		"y": { "type": "number" },
+		"color": { "type": "string" },
+	},
+	"required": ["wallId", "text", "x", "y"]
+}

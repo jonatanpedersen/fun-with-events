@@ -4,22 +4,23 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "babel-node index.js",
-    "test": "eslint ./index.js"
+    "start": "concurrent \"babel-node ./index.js\" \"babel-node ./write/index.js\" \"babel-node ./read/index.js\" \"babel-node ./ui/index.js\""
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "amqp": "0.2.4",
+    "amqplib": "^0.4.0",
     "babel-core": "6.1.21",
     "babel-plugin-syntax-async-functions": "6.1.18",
     "babel-plugin-transform-async-to-generator": "6.1.18",
     "babel-preset-es2015-node": "5.0.1",
+    "express": "^4.13.3",
+    "http-proxy": "^1.12.0",
     "jsonschema": "1.0.2",
     "mongodb": "2.0.48"
   },
   "devDependencies": {
-    "babel-eslint": "4.1.5",
-    "eslint": "1.9.0"
+    "concurrently": "^1.0.0"
   }
 }

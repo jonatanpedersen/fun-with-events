@@ -1,9 +1,0 @@
-{
-	"id": "/createTask",
-	"type": "object",
-	"properties": {
-		"taskId": {"type": "number"},
-		"description": {"type": "string"}
-	},
-	"required": ["taskId", "description"]
-}
