@@ -33,6 +33,8 @@ import { createHandleWallList } from  './queries/wallList';
 import { createHandleWallBuilt } from  './events/wallBuilt';
 import { createHandleWallCleaned } from  './events/wallCleaned';
 import { createHandleWallDrawnOn } from  './events/wallDrawnOn';
+import { createHandleWallMadePrivate } from  './events/wallMadePrivate';
+import { createHandleWallMadePublic } from  './events/wallMadePublic';
 import { createHandleWallWrittenOn } from  './events/wallWrittenOn';
 
 let schemas = {
@@ -50,7 +52,9 @@ async function main() {
         wallBuilt: () => createHandleWallBuilt(read, write),
         wallCleaned: () => createHandleWallCleaned(read, write),
         wallDrawnOn: () => createHandleWallDrawnOn(read, write),
-        wallWrittenOn: () => createHandleWallWrittenOn(read, write),
+        wallMadePrivate: () => createHandleWallMadePrivate(read, write),
+        wallMadePublic: () => createHandleWallMadePublic(read, write),
+        wallWrittenOn: () => createHandleWallWrittenOn(read, write)
       }
 
       let createHandle = handles[event.name];

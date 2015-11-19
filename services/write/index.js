@@ -21,12 +21,16 @@ import {
 import { createHandleBuildWall } from  './commands/buildWall';
 import { createHandleCleanWall } from  './commands/cleanWall';
 import { createHandleDrawOnWall } from  './commands/drawOnWall';
+import { createHandleMakeWallPrivate } from  './commands/makeWallPrivate';
+import { createHandleMakeWallPublic } from  './commands/makeWallPublic';
 import { createHandleWriteOnWall } from  './commands/writeOnWall';
 
 let schemas = {
   buildWall: require('../../commands/buildWall.json'),
   cleanWall: require('../../commands/cleanWall.json'),
   drawOnWall: require('../../commands/drawOnWall.json'),
+  makeWallPrivate: require('../../commands/makeWallPrivate.json'),
+  makeWallPublic: require('../../commands/makeWallPublic.json'),
   writeOnWall: require('../../commands/writeOnWall.json')
 }
 
@@ -55,6 +59,8 @@ async function main() {
             buildWall: () => createValidateWithJsonHandleWithDb(schemas.buildWall, createHandleBuildWall),
             cleanWall: () => createValidateWithJsonHandleWithDb(schemas.cleanWall, createHandleCleanWall),
             drawOnWall: () => createValidateWithJsonHandleWithDb(schemas.drawOnWall, createHandleDrawOnWall),
+            makeWallPrivate: () => createValidateWithJsonHandleWithDb(schemas.makeWallPrivate, createHandleMakeWallPrivate),
+            makeWallPublic: () => createValidateWithJsonHandleWithDb(schemas.makeWallPublic, createHandleMakeWallPublic),
             writeOnWall: () => createValidateWithJsonHandleWithDb(schemas.writeOnWall, createHandleWriteOnWall)
           })
         );
