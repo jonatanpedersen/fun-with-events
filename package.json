@@ -9,7 +9,6 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "amqp": "0.2.4",
     "amqplib": "^0.4.0",
     "babel-core": "6.1.21",
     "babel-plugin-syntax-async-functions": "6.1.18",
@@ -18,7 +17,8 @@
     "express": "^4.13.3",
     "http-proxy": "^1.12.0",
     "jsonschema": "1.0.2",
-    "mongodb": "2.0.48"
+    "mongodb": "2.0.48",
+    "when": "^3.7.4"
   },
   "devDependencies": {
     "concurrently": "^1.0.0"

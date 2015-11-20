@@ -9,20 +9,18 @@ import amqp from 'amqplib';
 import { Validator } from 'jsonschema';
 import {
   createConnectToMongoDB,
-  createConnectToRabbitMQ,
   createHandleRequest,
   createGetRequestBody,
   createGetRequestQuery,
   createDispatch,
   createCompositeHandle,
-  createValidateUsingJsonSchema,
-  createReadEventsFromMongoDB,
-  createAppendEventToMongoDB
+  createValidateUsingJsonSchema
 } from  '../../lib';
 
-// read/write
-import { createReadFromMongoDB } from '../../lib/read/read';
-import { createWriteToMongoDB } from '../../lib/read/write';
+import {
+  createReadFromMongoDB,
+  createWriteToMongoDB
+} from '../../lib/read';
 
 // queries
 import { createHandleStats } from  './queries/stats';
@@ -38,40 +36,23 @@ import { createHandleWallMadePublic } from  './events/wallMadePublic';
 import { createHandleWallWrittenOn } from  './events/wallWrittenOn';
 
 let schemas = {
-  wall: require('../..//queries/wall.json')
+  wall: require('../../queries/wall.json')
 }
 
 async function main() {
   try {
-    let db = await createConnectToMongoDB(mongodb)('mongodb://localhost:27017/test');
+    let db = await createConnectToMongoDB(mongodb)('mongodb://localhost:27017/read');
     let read = createReadFromMongoDB(db);
     let write = createWriteToMongoDB(db);
 
-    async function dispatchEvent(event) {
-      let handles = {
-        wallBuilt: () => createHandleWallBuilt(read, write),
-        wallCleaned: () => createHandleWallCleaned(read, write),
-        wallDrawnOn: () => createHandleWallDrawnOn(read, write),
-        wallMadePrivate: () => createHandleWallMadePrivate(read, write),
-        wallMadePublic: () => createHandleWallMadePublic(read, write),
-        wallWrittenOn: () => createHandleWallWrittenOn(read, write)
-      }
-
-      let createHandle = handles[event.name];
-
-      if (createHandle) {
-        let handle = createHandle();
-
-        if (handle) {
-          try {
-            await handle(event);
-          }
-          catch(ex) {
-            console.log(ex);
-          }
-        }
-      }
-    }
+    let dispatchEvent =  createDispatch({
+      wallBuilt: () => createHandleWallBuilt(read, write),
+      wallCleaned: () => createHandleWallCleaned(read, write),
+      wallDrawnOn: () => createHandleWallDrawnOn(read, write),
+      wallMadePrivate: () => createHandleWallMadePrivate(read, write),
+      wallMadePublic: () => createHandleWallMadePublic(read, write),
+      wallWrittenOn: () => createHandleWallWrittenOn(read, write)
+    });
 
     amqp.connect('amqp://localhost').then(function(connection) {
       process.once('SIGINT', function() { connection.close(); });

@@ -1,7 +1,6 @@
 export function createHandleWallMadePrivate(read, write) {
   return async function handle(event) {
     let wallList = await read('wallList') || [];
-    console.log(wallList);
     wallList.splice(wallList.indexOf(event.data.wallId), 1);
     await write('wallList', wallList);
 

@@ -4,7 +4,6 @@ import fs from 'fs';
 import http from 'http';
 import https from 'https';
 import mongodb from 'mongodb';
-import amqp from 'amqp';
 import { Validator } from 'jsonschema';
 import {
   createConnectToMongoDB,
@@ -12,11 +11,14 @@ import {
   createGetRequestBody,
   createDispatch,
   createCompositeHandle,
-  createValidateUsingJsonSchema,
+  createValidateUsingJsonSchema
+} from  '../../lib';
+
+import {
   createReadEventsFromMongoDB,
   createAppendEventToMongoDB,
   createPublishEventToRabbitMQ
-} from  '../../lib';
+} from  '../../lib/write';
 
 import { createHandleBuildWall } from  './commands/buildWall';
 import { createHandleCleanWall } from  './commands/cleanWall';
@@ -36,7 +38,7 @@ let schemas = {
 
 async function main() {
   try {
-    let db = await createConnectToMongoDB(mongodb)('mongodb://localhost:27017/test');
+    let db = await createConnectToMongoDB(mongodb)('mongodb://localhost:27017/write');
 
     function createValidateWithJsonHandleWithDb(schema, createHandle) {
       return createCompositeHandle(
