@@ -5,29 +5,16 @@ import http from 'http';
 import https from 'https';
 import mongodb from 'mongodb';
 import amqp from 'amqplib';
-
 import { Validator } from 'jsonschema';
-import {
-  createConnectToMongoDB,
-  createHandleRequest,
-  createGetRequestBody,
-  createGetRequestQuery,
-  createDispatch,
-  createCompositeHandle,
-  createValidateUsingJsonSchema
-} from  '../../lib';
 
-import {
-  createReadFromMongoDB,
-  createWriteToMongoDB
-} from '../../lib/read';
-
-// queries
-import { createHandleStats } from  './queries/stats';
-import { createHandleWall } from  './queries/wall';
-import { createHandleWallList } from  './queries/wallList';
+// lib
+import { createConnectToMongoDB, createHandleRequest, createGetRequestBody, createGetRequestQuery, createDispatch, createCompositeHandle, createValidateUsingJsonSchema } from  '../../lib';
+import { createReadFromMongoDB, createWriteToMongoDB, createSubscribeToRabbitMQAndDispatch } from '../../lib/read';
 
 // events
+import events from '../../events';
+
+// handle events
 import { createHandleWallBuilt } from  './events/wallBuilt';
 import { createHandleWallCleaned } from  './events/wallCleaned';
 import { createHandleWallDrawnOn } from  './events/wallDrawnOn';
@@ -35,9 +22,13 @@ import { createHandleWallMadePrivate } from  './events/wallMadePrivate';
 import { createHandleWallMadePublic } from  './events/wallMadePublic';
 import { createHandleWallWrittenOn } from  './events/wallWrittenOn';
 
-let schemas = {
-  wall: require('../../queries/wall.json')
-}
+// queries
+import queries from '../../queries';
+
+// handle queries
+import { createHandleStats } from  './queries/stats';
+import { createHandleWall } from  './queries/wall';
+import { createHandleWallList } from  './queries/wallList';
 
 async function main() {
   try {
@@ -45,45 +36,16 @@ async function main() {
     let read = createReadFromMongoDB(db);
     let write = createWriteToMongoDB(db);
 
-    let dispatchEvent =  createDispatch({
+    let subscribeToRabbitMQAndDispatch = createSubscribeToRabbitMQAndDispatch(amqp, createDispatch({
       wallBuilt: () => createHandleWallBuilt(read, write),
       wallCleaned: () => createHandleWallCleaned(read, write),
       wallDrawnOn: () => createHandleWallDrawnOn(read, write),
       wallMadePrivate: () => createHandleWallMadePrivate(read, write),
       wallMadePublic: () => createHandleWallMadePublic(read, write),
       wallWrittenOn: () => createHandleWallWrittenOn(read, write)
-    });
+    }));
 
-    amqp.connect('amqp://localhost').then(function(connection) {
-      process.once('SIGINT', function() { connection.close(); });
-
-      return connection.createChannel().then(function(channel) {
-        var ok = channel.assertExchange('test', 'fanout', {durable: true});
-
-        ok = ok.then(function() {
-          return channel.assertQueue('', { exclusive: true });
-        });
-
-        ok = ok.then(function(qok) {
-          return channel.bindQueue(qok.queue, 'test', 'read').then(function() {
-            return qok.queue;
-          });
-        });
-
-        ok = ok.then(function(queue) {
-          return channel.consume(queue, handleEvent, { noAck: false });
-        });
-
-        function handleEvent(rawEvent) {
-          var event = {
-            name: rawEvent.fields.routingKey,
-            data: JSON.parse(rawEvent.content.toString())
-          };
-
-          dispatchEvent(event);
-        }
-      });
-    }).then(null, console.warn);
+    subscribeToRabbitMQAndDispatch();
 
     function createValidateWithJsonHandleWithReadFromMongoDB(schema, createHandle) {
       return createCompositeHandle(
@@ -101,7 +63,7 @@ async function main() {
           createGetRequestQuery(),
           createDispatch({
             stats: () => createHandleStats(read),
-            wall: () => createValidateWithJsonHandleWithReadFromMongoDB(schemas.wall, createHandleWall),
+            wall: () => createValidateWithJsonHandleWithReadFromMongoDB(queries.wall, createHandleWall),
             wallList: () => createHandleWallList(read)
           })
         );

@@ -5,36 +5,15 @@ import http from 'http';
 import https from 'https';
 import mongodb from 'mongodb';
 import { Validator } from 'jsonschema';
-import {
-  createConnectToMongoDB,
-  createHandleRequest,
-  createGetRequestBody,
-  createDispatch,
-  createCompositeHandle,
-  createValidateUsingJsonSchema
-} from  '../../lib';
-
-import {
-  createReadEventsFromMongoDB,
-  createAppendEventToMongoDB,
-  createPublishEventToRabbitMQ
-} from  '../../lib/write';
-
+import { createConnectToMongoDB, createHandleRequest, createGetRequestBody, createDispatch, createCompositeHandle, createValidateUsingJsonSchema } from  '../../lib';
+import { createReadEventsFromMongoDB, createAppendEventToMongoDB, createPublishEventToRabbitMQ } from  '../../lib/write';
 import { createHandleBuildWall } from  './commands/buildWall';
 import { createHandleCleanWall } from  './commands/cleanWall';
 import { createHandleDrawOnWall } from  './commands/drawOnWall';
 import { createHandleMakeWallPrivate } from  './commands/makeWallPrivate';
 import { createHandleMakeWallPublic } from  './commands/makeWallPublic';
 import { createHandleWriteOnWall } from  './commands/writeOnWall';
-
-let schemas = {
-  buildWall: require('../../commands/buildWall.json'),
-  cleanWall: require('../../commands/cleanWall.json'),
-  drawOnWall: require('../../commands/drawOnWall.json'),
-  makeWallPrivate: require('../../commands/makeWallPrivate.json'),
-  makeWallPublic: require('../../commands/makeWallPublic.json'),
-  writeOnWall: require('../../commands/writeOnWall.json')
-}
+import commands from '../../commands';
 
 async function main() {
   try {
@@ -58,12 +37,12 @@ async function main() {
         let handleRequest = createHandleRequest(
           createGetRequestBody(),
           createDispatch({
-            buildWall: () => createValidateWithJsonHandleWithDb(schemas.buildWall, createHandleBuildWall),
-            cleanWall: () => createValidateWithJsonHandleWithDb(schemas.cleanWall, createHandleCleanWall),
-            drawOnWall: () => createValidateWithJsonHandleWithDb(schemas.drawOnWall, createHandleDrawOnWall),
-            makeWallPrivate: () => createValidateWithJsonHandleWithDb(schemas.makeWallPrivate, createHandleMakeWallPrivate),
-            makeWallPublic: () => createValidateWithJsonHandleWithDb(schemas.makeWallPublic, createHandleMakeWallPublic),
-            writeOnWall: () => createValidateWithJsonHandleWithDb(schemas.writeOnWall, createHandleWriteOnWall)
+            buildWall: () => createValidateWithJsonHandleWithDb(commands.buildWall, createHandleBuildWall),
+            cleanWall: () => createValidateWithJsonHandleWithDb(commands.cleanWall, createHandleCleanWall),
+            drawOnWall: () => createValidateWithJsonHandleWithDb(commands.drawOnWall, createHandleDrawOnWall),
+            makeWallPrivate: () => createValidateWithJsonHandleWithDb(commands.makeWallPrivate, createHandleMakeWallPrivate),
+            makeWallPublic: () => createValidateWithJsonHandleWithDb(commands.makeWallPublic, createHandleMakeWallPublic),
+            writeOnWall: () => createValidateWithJsonHandleWithDb(commands.writeOnWall, createHandleWriteOnWall)
           })
         );
 

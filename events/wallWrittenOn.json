@@ -6,7 +6,7 @@
 		"x": { "type": "number" },
 		"y": { "type": "number" },
 		"text": { "type": "string" },
-		"color": { "type": "string" },
+		"color": { "type": "string" }
 	},
 	"required": ["wallId", "x", "y", "text", "color"]
 }

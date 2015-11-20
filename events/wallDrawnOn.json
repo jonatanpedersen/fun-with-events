@@ -9,5 +9,5 @@
 		"y2": { "type": "number" },
 		"color": { "type": "string" }
 	},
-	"required": ["wallId", "x1", "y1", "x2", "y2" "color"]
+	"required": ["wallId", "x1", "y1", "x2", "y2", "color"]
 }
