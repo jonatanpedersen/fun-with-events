@@ -50,8 +50,8 @@ function main() {
   let httpServer = http.createServer(createApp(httpRouteMap));
   let httpsServer = https.createServer({ key: fs.readFileSync('./server.key', 'utf8'), cert: fs.readFileSync('./server.crt', 'utf8') }, createApp(httpsRouteMap));
 
-  httpServer.listen(8080, () => { console.log('proxy listening on port 80'); });
-  httpsServer.listen(80443, () => { console.log('proxy listening on port 443'); });
+  httpServer.listen(80, () => { console.log('proxy listening on port 80'); });
+  httpsServer.listen(443, () => { console.log('proxy listening on port 443'); });
 }
 
 main();

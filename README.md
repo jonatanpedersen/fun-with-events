@@ -13,14 +13,26 @@ npm install
 ```
 
 ## Usage
-Start the application:
+Start the services:
 ``` bash
-npm start
+sudo npm start
 ```
+
+Open the user interface https://localhost
 
 Note: You need RabbitMQ and MongoDB. The application connects to ```amqp://guest:guest@localhost:5672``` and ```mongodb://localhost:27017/test``` by default.
 
 ### Core Concepts
+
+#### write api
+ * Listens for commands and dispatches them to handlers that consume and append events from and to event streams. The event streams persist and publish events.
+
+#### read api
+ * Listens for events and dispatches them to handlers that update view models.
+ * Listens for queries and dispatches them to handlers that serve view models.
+
+#### ui
+ * Serves static html files.
 
 #### command
 Something that describes a desired mutation of a domain object. Consists of a name and some parameters.
@@ -87,12 +99,6 @@ Validates a ```command```, ```event``` or  ```query``` and throws an error if ne
 async function validate(thing) {
 }
 ```
-
-#### Services
-The system is comprised of three services.
- * The Read service
- * The Write service
- * The UI service
 
 #### composition root
 The applications ```main()``` function is the composition root, and it is composed primarily of ```functions```.
