@@ -1,5 +1,5 @@
 # fun-with-events
-This is an ongoing exploration of [CQRS](http://martinfowler.com/bliki/CQRS.html), [Event Sourcing](http://martinfowler.com/eaaDev/EventSourcing.html), [Pub/Sub](https://en.wikipedia.org/wiki/Publish%E2%80%93subscribe_pattern) and [Dependency Injection](https://en.wikipedia.org/wiki/Dependency_injection) in the context of [ES6/7](http://www.ecma-international.org/publications/standards/Ecma-262.htm) and the [S.O.L.I.D.](http://butunclebob.com/ArticleS.UncleBob.PrinciplesOfOod) principles.
+This is an ongoing exploration of [CQRS](http://martinfowler.com/bliki/CQRS.html), [Event Sourcing](http://martinfowler.com/eaaDev/EventSourcing.html), [Pub/Sub](https://en.wikipedia.org/wiki/Publish%E2%80%93subscribe_pattern) and [Dependency Injection](https://en.wikipedia.org/wiki/Dependency_injection) in the context of [ES6/7](http://www.ecma-international.org/publications/standards/Ecma-262.htm) and a variation of [S.O.L.I.D.](http://butunclebob.com/ArticleS.UncleBob.PrinciplesOfOod) principles applied to functions rather than classes.
 
 ## Setup
 Clone from GitHub:
@@ -22,17 +22,19 @@ Open the user interface https://localhost
 
 Note: You need RabbitMQ and MongoDB. The application connects to ```amqp://guest:guest@localhost:5672``` and ```mongodb://localhost:27017/test``` by default.
 
-### Core Concepts
+### Responsibilities
 
 #### write api
- * Listens for commands and dispatches them to handlers that consume and append events from and to event streams. The event streams persist and publish events.
+ * Listens for commands and dispatches them to handlers that read and append events from and to event streams. The event streams persists events to storage and publishes events to a message queue
 
 #### read api
- * Listens for events and dispatches them to handlers that update view models.
- * Listens for queries and dispatches them to handlers that serve view models.
+ * Listens for events and dispatches them to handlers that update view models
+ * Listens for queries and dispatches them to handlers that serve view models
 
 #### ui
- * Serves static html files.
+ * Serve static html files
+ * Send commands to the write api
+ * Send queries to the read api
 
 #### command
 Something that describes a desired mutation of a domain object. Consists of a name and some parameters.
@@ -47,10 +49,10 @@ Something that describes a desired mutation of a domain object. Consists of a na
 }
 ```
 
-Actions are always named with a verb followed by the name of the domain object. e.g. ```createTask```.
+Actions are always named with a verb followed by the name of the domain object. e.g. ```createTask``` or  ```acceptOrder``` .
 
 #### event
-Something that tell us that a domain object has mutated. Consists of a name and some data.
+Something that tell us that a domain object has mutated. Consists of a name and some data describing the mutation.
 
 ``` js
 {
