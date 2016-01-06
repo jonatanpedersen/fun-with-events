@@ -21,6 +21,14 @@ function main() {
   function createApp(routeMap) {
     let proxy = httpProxy.createProxyServer();
 
+    proxy.on('error', function (err, req, res) {
+      res.writeHead(500, {
+        'Content-Type': 'text/plain'
+      });
+
+      res.end('Something went wrong. And we are reporting a custom error message.');
+    });
+
     let routes = Object.keys(routeMap).reduce((routes, routeKey) => {
         routes.push({
           pattern:new RegExp(routeKey),
