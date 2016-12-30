@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "concurrent \"node .\" \"node ./services/write/\" \"node ./services/read/\" \"node ./services/ui/\""
+    "start": "concurrent \"node .\" \"node ./services/write/\" \"node ./services/read/\" \"node ./services/ui/\"",
+    "test": "mocha"
   },
   "author": "Jonatan Pedersen",
   "license": "MIT",
@@ -21,6 +22,16 @@
     "when": "^3.7.4"
   },
   "devDependencies": {
-    "concurrently": "^3.1.0"
+    "babel-eslint": "^7.1.1",
+    "chai": "^3.5.0",
+    "chai-as-promised": "^6.0.0",
+    "concurrently": "^3.1.0",
+    "eslint": "^3.12.2",
+    "eslint-plugin-import": "^2.2.0",
+    "mocha": "^3.2.0",
+    "mocha-eslint": "^3.0.1",
+    "sinon": "^1.17.6",
+    "sinon-as-promised": "^4.0.2",
+    "sinon-chai": "^2.8.0"
   }
 }
