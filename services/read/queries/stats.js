@@ -1,5 +1,9 @@
 export function createHandleStats(read) {
   return async function handle(query) {
-    return await read('stats');
+    try {
+      return await read('stats');
+    } catch (err) {
+      throw err;
+    }
   }
 }

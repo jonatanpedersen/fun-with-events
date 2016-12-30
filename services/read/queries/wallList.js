@@ -1,5 +1,9 @@
 export function createHandleWallList(read) {
   return async function handle(query) {
-    return await read('wallList');
+    try {
+      return await read('wallList');
+    } catch (err) {
+      throw err;
+    }
   }
 }
