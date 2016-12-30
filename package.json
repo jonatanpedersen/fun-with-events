@@ -2,9 +2,8 @@
   "name": "fun-with-events",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
   "scripts": {
-    "start": "concurrent \"node .\" \"node ./services/write/\" \"node ./services/read/\" \"node ./services/ui/\"",
+    "start": "concurrent \"node ./src/router\" \"node ./src/write/\" \"node ./src/read/\" \"node ./src/ui/\"",
     "test": "mocha"
   },
   "author": "Jonatan Pedersen",

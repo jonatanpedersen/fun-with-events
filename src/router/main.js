@@ -4,7 +4,6 @@ import https from 'https';
 import httpProxy from 'http-proxy';
 
 export function main() {
-
   let httpRouteMap = {
     '/api/write(.*)': 'http://127.0.0.1:10080',
     '/api/read(.*)': 'http://127.0.0.1:20080',

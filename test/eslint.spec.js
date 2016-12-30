@@ -1,7 +1,7 @@
 import mochaEslint from 'mocha-eslint';
 
 mochaEslint([
-	'services',
+	'src',
 	'test'
 ], {
 	alwaysWarn: false
