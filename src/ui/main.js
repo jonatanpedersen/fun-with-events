@@ -5,7 +5,7 @@ import express from 'express';
 
 export function main () {
 	let app = express();
-	app.use('/', express.static('./services/ui/public'));
+	app.use('/', express.static('./src/ui/public'));
 
 	let httpServer = http.createServer(app);
 	let httpsServer = https.createServer({ key: fs.readFileSync('./server.key', 'utf8'), cert: fs.readFileSync('./server.crt', 'utf8') }, app);
