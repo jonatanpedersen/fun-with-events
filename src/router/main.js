@@ -42,7 +42,7 @@ export function main() {
         let matches = request.url.match(route.pattern);
 
         if (matches) {
-          console.log(`Proxy: ${request.url} => ${route.target}${matches[1]}`);
+          console.log(`Router: ${request.url} => ${route.target}${matches[1]}`);
 
           request.url = matches[1];
           proxy.web(request, response, { target: route.target });
@@ -56,6 +56,6 @@ export function main() {
   let httpServer = http.createServer(createApp(httpRouteMap));
   let httpsServer = https.createServer({ key: fs.readFileSync('./server.key', 'utf8'), cert: fs.readFileSync('./server.crt', 'utf8') }, createApp(httpsRouteMap));
 
-  httpServer.listen(80, () => { console.log('proxy listening on port 80'); });
-  httpsServer.listen(443, () => { console.log('proxy listening on port 443'); });
+  httpServer.listen(80, () => { console.log('router listening on port 80'); });
+  httpsServer.listen(443, () => { console.log('router listening on port 443'); });
 }
