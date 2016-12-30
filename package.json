@@ -1,26 +1,26 @@
 {
-  "name": "functional-composition",
+  "name": "fun-with-events",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "concurrent \"babel-node ./index.js\" \"babel-node ./services/write/index.js\" \"babel-node ./services/read/index.js\" \"babel-node ./services/ui/index.js\""
+    "start": "concurrent \"node .\" \"node ./services/write/\" \"node ./services/read/\" \"node ./services/ui/\""
   },
-  "author": "",
-  "license": "ISC",
+  "author": "Jonatan Pedersen",
+  "license": "MIT",
   "dependencies": {
-    "amqplib": "^0.4.0",
-    "babel-core": "6.1.21",
-    "babel-plugin-syntax-async-functions": "6.1.18",
-    "babel-plugin-transform-async-to-generator": "6.1.18",
-    "babel-preset-es2015-node": "5.0.1",
+    "amqplib": "^0.5.1",
+    "babel-core": "^6.21.0",
+    "babel-plugin-syntax-async-functions": "^6.13.0",
+    "babel-plugin-transform-async-to-generator": "^6.16.0",
+    "babel-plugin-transform-es2015-modules-commonjs": "^6.18.0",
     "express": "^4.13.3",
     "http-proxy": "^1.12.0",
-    "jsonschema": "1.0.2",
-    "mongodb": "2.0.48",
+    "jsonschema": "^1.1.1",
+    "mongodb": "^2.2.16",
     "when": "^3.7.4"
   },
   "devDependencies": {
-    "concurrently": "^1.0.0"
+    "concurrently": "^3.1.0"
   }
 }
